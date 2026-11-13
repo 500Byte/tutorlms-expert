@@ -1,0 +1,23 @@
+{
+  "skill_name": "tutorlms-expert",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Tengo un curso en Tutor LMS que no deja entrar a las lecciones: cualquier URL de lección, quiz o tarea me redirige a la ficha del curso con #tutor_prereq. El alumno está inscrito y pagó. ¿Qué reviso y cómo lo arreglo sin romper la venta?",
+      "expected_output": "Identifica _tutor_course_prerequisites_ids como causa, revisa tutor_pro_prerequisites_redirect, propone desactivar el bloqueo o inscribir al alumno en el curso previo, y verifica que la lección devuelve 200 sin #tutor_prereq. Debe mencionar el riesgo de bloquear la compra.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Necesito crear la estructura de un curso nuevo en Tutor LMS: 4 temas y 12 lecciones repartidas entre ellos, sin duplicar nada si ejecuto el proceso dos veces. ¿Cómo lo hago de forma segura y cómo verifico que quedó bien?",
+      "expected_output": "Propone un importador idempotente por título + post_parent, explica el modelo topics/lesson con _tutor_course_id_for_lesson, da un JSON de estructura o un script, y verifica conteos y lecciones sin enlace al curso.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Un alumno completó el 100% del curso en Tutor LMS pero no le aparece el certificado. La tarea práctica está entregada y sigue en Pending. ¿Cuál es la causa y qué opciones tengo para que el alumno reciba su certificado?",
+      "expected_output": "Explica course_completion_process strict vs flexible, la relación con la tarea Pending y el comentario course_completed, y da las dos opciones: calificar la tarea o cambiar a flexible. Debe indicar cómo verificar is_completed_course y la página de certificados.",
+      "files": []
+    }
+  ]
+}
