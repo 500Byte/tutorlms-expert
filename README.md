@@ -12,12 +12,17 @@ tutorlms-expert/
 │   ├── addons.md                # addons de Tutor Pro y cuándo usarlos
 │   ├── course-setup.md          # de cero a curso vendible
 │   ├── troubleshooting.md       # síntoma → causa → fix
-│   └── qa-student.md            # simulación de estudiante de punta a punta
+│   ├── qa-student.md            # simulación de estudiante de punta a punta
+│   ├── audit-and-migration.md   # auditoría, duplicados y migración de LMS
+│   ├── accessibility-compliance.md # WCAG, UPL/EOIR, privacidad y claims
+│   ├── commerce-email.md        # WooCommerce, bundles, cupones, emails, DMARC
+│   └── performance-seo.md       # assets, caché, queries, SEO y analytics
 ├── scripts/
 │   ├── tutor-inspect.sh         # inventario read-only por WP-CLI
 │   ├── create-course-structure.php
 │   ├── enroll-student.php
-│   └── check-course.php
+│   ├── check-course.php
+│   └── audit-course.php         # auditoría profunda de un curso
 └── evals/evals.json             # 3 casos de prueba realistas
 ```
 
@@ -48,6 +53,27 @@ wp eval-file scripts/enroll-student.php 1499 qa.student 'QaStudent-IPT-2026!#' q
 # Verificar un curso antes de publicar
 wp eval-file scripts/check-course.php 1499 --path=/ruta/al/wordpress
 ```
+
+## Aplicaciones
+
+| Capa | Qué resuelve | Referencia |
+|---|---|---|
+| **Auditoría y lanzamiento** | Detectar cursos vacíos, lecciones sin enlace, quizzes sin preguntas, tareas sin curso, adjuntos que faltan, certificados sin plantilla, productos sin precio, duplicados y demo huérfano. | `audit-and-migration.md`, `audit-course.php` |
+| **Migración** | Traer cursos, lecciones, quizzes y alumnos desde LearnDash, LifterLMS o LearnPress; qué no se migra; rollback. | `audit-and-migration.md` |
+| **Soporte y troubleshooting** | Lecciones bloqueadas, progreso falso, “no autorizado”, nonce, certificado que no se emite, botón next, login 500, timezone, CSS global. | `troubleshooting.md` |
+| **Comercio y email** | Producto Woo, precio, inscripción, bundles, cupones, suscripciones, FluentSMTP, DMARC, secuencias de bienvenida/recordatorio/certificado. | `commerce-email.md` |
+| **Accesibilidad y cumplimiento** | WCAG 2.2 AA, subtítulos y audio descripción, UPL/EOIR, CCPA/CPRA/GDPR, FTC, disclaimers y claims. | `accessibility-compliance.md` |
+| **Rendimiento y SEO** | Assets de Tutor, object cache, queries, video, schema de curso, GA4/Meta. | `performance-seo.md` |
+| **QA de estudiante** | Simular compra/acceso, recorrer lecciones, quiz, tarea, progreso y certificado. | `qa-student.md` |
+
+## Qué cumple y qué no
+
+- **Accesibilidad:** da criterios y evidencias para WCAG 2.2 AA; no certifica una instalación concreta. Las captions son nivel A y la audio descripción (1.2.5) es el hueco habitual en tutoriales de formularios.
+- **Privacidad:** orienta sobre CCPA/CPRA/GDPR y datos sensibles (estatus migratorio, origen étnico, narrativas de caso); no sustituye una revisión legal ni una DPIA.
+- **Publicidad y claims:** advierte sobre “oficial”, “garantizado”, “acreditado” y promesas de resultado; no valida claims sin evidencia.
+- **EOIR:** una academia for-profit no es una organización reconocida por EOIR; la skill evita prometer “representante acreditado” o “certificación oficial”.
+- **Pagos:** asume WooCommerce/Stripe/PayPal y no almacena datos de tarjeta; no sustituye la configuración PCI del gateway.
+- **Migración:** cubre las vías oficiales (LearnDash, LifterLMS, LearnPress); Teachable y Moodle no tienen migración oficial y se marcan como no verificables.
 
 ## Principios
 

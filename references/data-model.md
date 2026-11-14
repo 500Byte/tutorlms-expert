@@ -27,8 +27,8 @@ Ordering inside a topic is `menu_order`; topics are ordered by `menu_order` on t
 
 | Meta key | Type | Notes |
 |---|---|---|
-| `_tutor_course_price` | number | Regular price |
-| `_tutor_course_sale_price` | number | 0 or empty for no sale |
+| `tutor_course_price` | number | Regular price (Tutor 4 native). Some installs still carry legacy `_tutor_course_price`; verify both. |
+| `tutor_course_sale_price` | number | 0 or empty for no sale |
 | `_tutor_course_price_type` | string | `paid` / `free` |
 | `_tutor_course_product_id` | int | WooCommerce product ID |
 | `_tutor_is_public_course` | `yes`/`no` | Public courses can be viewed without enrollment |
@@ -46,13 +46,15 @@ Ordering inside a topic is `menu_order`; topics are ordered by `menu_order` on t
 
 | Meta key | Type | Notes |
 |---|---|---|
-| `_tutor_course_id_for_lesson` | int | Parent course (required for progress and certificates) |
+| `_tutor_course_id_for_lesson` | int | Parent course fallback; Tutor resolves the course from the topic parent, but the builder writes this meta. Missing it is a risk for progress and certificates. |
 | `_video` | array | `['source' => 'youtube', 'source_video_id' => '...', 'source_external_url' => '...', 'source_html5' => '', 'poster' => '']` |
 | `_tutor_attachments` | array | Attachment IDs, e.g. `['2111']` |
 | `_is_preview` | `yes`/`no` | Lesson visible without enrollment |
 | `_thumbnail_id` | int | Featured image |
 
-A lesson without `_tutor_course_id_for_lesson` may render but will not count toward progress or the certificate. This is the most common silent failure.
+A lesson without `_tutor_course_id_for_lesson` can still resolve through its topic, but the builder writes the meta and some progress/certificate paths rely on it. Audit it; do not assume the topic parent is enough on every version.
+
+> Tutor 4's native price meta is `tutor_course_price` (no leading underscore). The builder and the bundle addon read that key. `_tutor_course_price` is legacy; if both exist, keep them in sync or migrate to the native key.
 
 ## Quiz schema
 

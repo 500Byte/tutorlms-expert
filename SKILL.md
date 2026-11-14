@@ -14,14 +14,14 @@ Tutor 4 stores the curriculum as WordPress posts and uses `post_parent` + `menu_
 
 | Piece | Post type | Parent | Key meta |
 |---|---|---|---|
-| Course | `courses` | 0 | `_tutor_course_price`, `_tutor_course_sale_price`, `_tutor_course_product_id`, `_tutor_is_public_course`, `_course_duration`, `_tutor_course_prerequisites_ids`, `tutor_course_certificate_template` |
+| Course | `courses` | 0 | `tutor_course_price`, `tutor_course_sale_price` (Tutor 4; `_tutor_course_price` is legacy), `_tutor_course_product_id`, `_tutor_is_public_course`, `_course_duration`, `_tutor_course_prerequisites_ids`, `tutor_course_certificate_template` |
 | Topic | `topics` | course ID | `menu_order` |
-| Lesson | `lesson` | topic ID | `_tutor_course_id_for_lesson`, `_video`, `_tutor_attachments`, `_is_preview` |
+| Lesson | `lesson` | topic ID | `_tutor_course_id_for_lesson` (fallback; Tutor resolves by topic parent), `_video`, `_tutor_attachments`, `_is_preview` |
 | Quiz | `tutor_quiz` | topic ID | `tutor_quiz_option`; questions live in `{prefix}tutor_quiz_questions` and answers in `{prefix}tutor_quiz_question_answers` |
 | Assignment | `tutor_assignments` | topic ID | `_tutor_course_id_for_assignments`, `assignment_option`, `_tutor_assignment_total_mark`, `_tutor_assignment_pass_mark` |
 | Enrollment | `tutor_enrolled` | course ID | `post_author` = student; `_tutor_enrolled_by_order_id`, `_tutor_enrolled_by_product_id` |
 | Announcement | `tutor_announcements` | course ID | none needed |
-| Bundle | `course-bundle` | 0 | `bundle-course-ids` = `"12,34,56"`; price via `_tutor_course_price`, product via `_tutor_course_product_id` |
+| Bundle | `course-bundle` | 0 | `bundle-course-ids` = `"12,34,56"`; price is derived from its courses (no automatic discount), product via `_tutor_course_product_id` |
 
 Completion is not a post. Tutor records it in `{prefix}comments` with `comment_agent = 'TutorLMSPlugin'`, `comment_type = 'course_completed'`, `comment_post_ID = course_id`, `user_id = student_id`. Lesson completion is user meta `_tutor_completed_lesson_id_<lesson_id>`.
 
@@ -97,6 +97,7 @@ More detail and exact SQL in `references/troubleshooting.md`.
 - `scripts/create-course-structure.php` — idempotent topic/lesson importer from JSON.
 - `scripts/enroll-student.php` — create a student and enroll them in a course (idempotent).
 - `scripts/check-course.php` — verify counts, attachments, videos, prerequisites and completion settings.
+- `scripts/audit-course.php` — deeper audit of one course: missing course links, empty quizzes, assignments without a course, attachments, certificate, product, price, visibility, duplicates, demo orphans (read-only).
 
 All scripts accept `--path=<wordpress-root>` through WP-CLI where relevant, and print a report suitable for pasting into an agent context.
 
@@ -107,6 +108,24 @@ All scripts accept `--path=<wordpress-root>` through WP-CLI where relevant, and 
 - `references/course-setup.md` — step-by-step course setup from zero to sellable.
 - `references/troubleshooting.md` — symptom → root cause → fix, with SQL/WP-CLI.
 - `references/qa-student.md` — end-to-end student QA checklist and how to simulate it.
+- `references/audit-and-migration.md` — course audit checklist, duplicate/demo detection, and migration from LearnDash/LifterLMS/LearnPress.
+- `references/accessibility-compliance.md` — WCAG 2.2 AA for lessons/quizzes, captions/audio description, UPL/EOIR limits, privacy (CCPA/CPRA/GDPR), claims and certificate disclaimers.
+- `references/commerce-email.md` — WooCommerce product/enrollment states, bundles, coupons, subscriptions, FluentSMTP, DMARC, transactional email sequences.
+- `references/performance-seo.md` — Tutor asset loading, object cache, slow queries, video hosting, course SEO/schema, GA4/Meta events.
+
+## Which reference to read
+
+| Question | Reference |
+|---|---|
+| "What post/meta/table is this?" | `data-model.md` |
+| "How do I create a course from zero?" | `course-setup.md` |
+| "Why is this lesson blocked / progress wrong / certificate missing?" | `troubleshooting.md` |
+| "Can a student complete the flow?" | `qa-student.md` |
+| "Is this course ready to sell? Can I migrate it?" | `audit-and-migration.md` |
+| "Is it accessible/legal to sell this?" | `accessibility-compliance.md` |
+| "Why did the purchase not enroll / the email not arrive?" | `commerce-email.md` |
+| "Why is it slow / how does it rank?" | `performance-seo.md` |
+| "Which addon should I turn on?" | `addons.md` |
 
 ## Output contract
 
