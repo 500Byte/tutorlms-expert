@@ -25,7 +25,7 @@ ls wp-content/plugins/tutor-pro/addons
 | `content-drip` | Release content by days/date/prerequisite | Per-course `enable_content_drip` and `content_drip_type`. Best for cohorts, not self-paced. |
 | `course-bundle` | Sell several courses together | `course-bundle` post + `bundle-course-ids` + Woo product. Keep draft until pricing is approved. |
 | `subscription` / `wc-subscriptions` | Recurring access | Only with a defined recurring offer. |
-| `tutor-email` | Transactional emails and templates | Configure FluentSMTP/SMTP first; `email_from_address` must be a real mailbox. |
+| `tutor-email` | Transactional emails and templates | Configure an SMTP plugin (e.g. FluentSMTP, WP Mail SMTP) first; `email_from_address` must be a real mailbox. |
 | `tutor-notifications` | In-app notification bell | Optional; needs the addon enabled. |
 | `tutor-report` | Reports for revenue, courses, students | Useful after the first cohort. |
 | `calendar` | Course calendar | Pairs with live classes and assignment deadlines. |

@@ -1,7 +1,7 @@
 ---
 name: tutorlms-expert
 description: Operate, configure, troubleshoot, and QA Tutor LMS (TutorLMS) on WordPress. Use whenever the user mentions Tutor LMS, courses, lessons, topics, quizzes, assignments, certificates, enrollments, student dashboard, course bundles, prerequisites, content drip, gradebook, or any Tutor LMS problem (lessons blocked by prerequisites, progress not completing, certificate not issued, missing attachments, broken next button, login redirect, false progress). Also use when creating or auditing a course structure, configuring Tutor Pro addons, or simulating a student end-to-end.
-compatibility: WordPress with Tutor LMS 3.x/4.x, Tutor Pro, WP-CLI or SSH access, optionally EMCP Tools. Some addons require WooCommerce.
+compatibility: WordPress with Tutor LMS 3.x/4.x, Tutor Pro, WP-CLI or SSH access, optionally an MCP/REST client. Some addons require WooCommerce.
 ---
 
 # Tutor LMS Expert
@@ -51,10 +51,10 @@ The full inventory (tables, options, addon flags, quiz/assignment schemas) is in
 Use `scripts/create-course-structure.php` with a JSON map of `{course_id: [{title, lessons: [...]}]}`. It creates topics and lessons, sets `_tutor_course_id_for_lesson`, and is idempotent by title + parent. Then verify counts with `scripts/check-course.php`. Details and the full setup sequence: `references/course-setup.md`.
 
 ### Attach media and downloads
-Tutor uses `_video` (serialized array: `source`, `source_external_url`/`source_video_id`, `source_html5`, `poster`) and `_tutor_attachments` (array of attachment IDs). Attach ZIP/PDF resources to the lesson that promises them, then verify the lesson renders the "Attachments" tab. Large videos belong on YouTube/Vimeo (unlisted) or a streaming host, not IONOS shared hosting.
+Tutor uses `_video` (serialized array: `source`, `source_external_url`/`source_video_id`, `source_html5`, `poster`) and `_tutor_attachments` (array of attachment IDs). Attach ZIP/PDF resources to the lesson that promises them, then verify the lesson renders the "Attachments" tab. Large videos belong on YouTube/Vimeo (unlisted) or a streaming host, not on the same shared hosting as WordPress.
 
 ### Quizzes
-Quizzes are `tutor_quiz` posts with questions in `{prefix}tutor_quiz_questions` and answers in `{prefix}tutor_quiz_question_answers`. `tutor_quiz_option` is a serialized array (`passing_grade`, `attempts_allowed`, `time_limit`, etc.). Remove questions that belong to another course; a quiz for Visa T should not contain asylum questions. Verify the passing grade and that the student can submit before declaring it done.
+Quizzes are `tutor_quiz` posts with questions in `{prefix}tutor_quiz_questions` and answers in `{prefix}tutor_quiz_question_answers`. `tutor_quiz_option` is a serialized array (`passing_grade`, `attempts_allowed`, `time_limit`, etc.). Remove questions that belong to another course; a quiz for one course should not contain questions from another course. Verify the passing grade and that the student can submit before declaring it done.
 
 ### Assignments and gradebook
 `tutor_assignments` posts need `_tutor_course_id_for_assignments`, `assignment_option` (`time_duration`, `total_mark`, `pass_mark`, `upload_files_limit`, `upload_file_size_limit`) and the total/pass mark metas. The student must be enrolled in the assignment's course to start it; otherwise Tutor returns "No estás autorizado a realizar esta acción". The gradebook scale is global (`gradebook_scale`); Tutor does not provide per-course 40/60 weighting natively.
@@ -69,10 +69,10 @@ Course prerequisites use `_tutor_course_prerequisites_ids` and `tutor_pro_show_p
 A bundle is a `course-bundle` post with `bundle-course-ids` and a WooCommerce product. Create the product with `\TUTOR\Course::create_wc_product()` and link it with `\TUTOR\Course::sync_course_with_wc_product()`. Keep it `draft` until pricing and copy are approved. Subscriptions require the `subscription` or `wc-subscriptions` addon and a clear recurring offer; do not enable them speculatively.
 
 ### Login, dashboard and redirects
-Tutor's student dashboard is a page with `[tutor_dashboard]`; if the configured page is empty, students land on `wp-admin/profile.php` and may see a 500. Add a `login_redirect` filter for non-admins to `/escritorio/` (or the configured dashboard) and keep the dashboard page populated.
+Tutor's student dashboard is a page with `[tutor_dashboard]`; if the configured page is empty, students land on `wp-admin/profile.php` and may see a 500. Add a `login_redirect` filter for non-admins to `/dashboard/` (or the configured dashboard) and keep the dashboard page populated.
 
 ### Translations and CSS
-Tutor strings live in the `tutor`/`tutor-pro` domains. Use a `gettext` filter in a mu-plugin for small overrides ("Exercise Files" → "Adjuntos"). Put visual fixes in the Customizer or a child theme, not in an inactive snippet plugin. If WPCode is not installed, `wpcode` posts are dead data: move the logic to a mu-plugin and delete the orphans.
+Tutor strings live in the `tutor`/`tutor-pro` domains. Use a `gettext` filter in a mu-plugin for small overrides ("Exercise Files" → "Adjuntos"). Put visual fixes in the Customizer or a child theme, not in an inactive snippet plugin. If a snippet plugin is not installed, `wpcode` posts are dead data: move the logic to a mu-plugin and delete the orphans.
 
 ## Troubleshooting matrix
 
@@ -86,8 +86,8 @@ Tutor strings live in the `tutor`/`tutor-pro` domains. Use a `gettext` filter in
 | "Archivos adjuntos" tab empty | `_tutor_attachments` missing on the lesson | Attach the attachment ID array to the lesson |
 | Next button does nothing | `next_id = 0` or `next_is_locked` (course not public / not enrolled) | Check `get_course_prev_next_contents_by_id()`, make the course public, or fix the curriculum order |
 | Buttons stretch to 100% or 500px | A global CSS rule targeting `button` or `.tutor-btn-icon` | Remove the global rule; scope fixes to the component |
-| Login ends in `wp-admin/profile.php` 500 | No student dashboard redirect | `login_redirect` filter to `/escritorio/`; populate the dashboard page |
-| Dates/times off by hours | `timezone_string` empty and `gmt_offset = 0` | Set `America/New_York` (or the client's zone) |
+| Login ends in `wp-admin/profile.php` 500 | No student dashboard redirect | `login_redirect` filter to `/dashboard/`; populate the dashboard page |
+| Dates/times off by hours | `timezone_string` empty and `gmt_offset = 0` | Set `Your/Timezone` (or the client's zone) |
 
 More detail and exact SQL in `references/troubleshooting.md`.
 
@@ -109,8 +109,8 @@ All scripts accept `--path=<wordpress-root>` through WP-CLI where relevant, and 
 - `references/troubleshooting.md` — symptom → root cause → fix, with SQL/WP-CLI.
 - `references/qa-student.md` — end-to-end student QA checklist and how to simulate it.
 - `references/audit-and-migration.md` — course audit checklist, duplicate/demo detection, and migration from LearnDash/LifterLMS/LearnPress.
-- `references/accessibility-compliance.md` — WCAG 2.2 AA for lessons/quizzes, captions/audio description, UPL/EOIR limits, privacy (CCPA/CPRA/GDPR), claims and certificate disclaimers.
-- `references/commerce-email.md` — WooCommerce product/enrollment states, bundles, coupons, subscriptions, FluentSMTP, DMARC, transactional email sequences.
+- `references/accessibility-compliance.md` — WCAG 2.2 AA for lessons/quizzes, captions/audio description, regulated-advice boundaries (UPL, health, finance as examples), privacy (CCPA/CPRA/GDPR), claims and certificate disclaimers.
+- `references/commerce-email.md` — WooCommerce product/enrollment states, bundles, coupons, subscriptions, SMTP (e.g. FluentSMTP), DMARC, transactional email sequences.
 - `references/performance-seo.md` — Tutor asset loading, object cache, slow queries, video hosting, course SEO/schema, GA4/Meta events.
 
 ## Which reference to read

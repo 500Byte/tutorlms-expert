@@ -16,7 +16,7 @@ if (!$course_id) {
 }
 
 $username   = $args[1] ?? 'qa.student';
-$password   = $args[2] ?? 'QaStudent-IPT-2026!#';
+$password   = $args[2] ?? 'change-me-strong-password';
 $email      = $args[3] ?? $username . '@example.com';
 $product_id = isset($args[4]) ? (int) $args[4] : 0;
 

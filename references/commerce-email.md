@@ -2,7 +2,7 @@
 
 > Money lives in WooCommerce. Access lives in Tutor. Almost every "paid but no access" or "email never arrived" ticket is those two systems disagreeing about a status.
 >
-> Verified against Tutor 4.0.5 + Tutor Pro 4.0.4 (`course-bundle`, `wc-subscriptions`, `tutor-email` addons), WooCommerce 11.1.2, WooCommerce Stripe Gateway 11.0.0 and FluentSMTP 2.4.5, read from plugin source on 2026-11-13. Version-specific behaviour is marked inline — check the installed version before repeating it.
+> Verified against Tutor 4.x + Tutor Pro 4.x (`course-bundle`, `wc-subscriptions`, `tutor-email` addons), WooCommerce 11.1.2, WooCommerce Stripe Gateway 11.0.0 and FluentSMTP 2.4.5, read from plugin source on 2026-11-13. Version-specific behaviour is marked inline — check the installed version before repeating it.
 
 ## 0. Who owns what
 
@@ -285,7 +285,7 @@ Tutor's "Course Enrolled" mail fires from `tutor_after_enrolled` — which, per 
 
 Tutor's bulk/cron emails (new lesson, new quiz, new assignment) require **WP Cron for Bulk Mailing** to be on; the transactional ones are not affected.
 
-### FluentSMTP
+### SMTP plugin (FluentSMTP example)
 
 Role: take everything `wp_mail()` produces, deliver it through one authenticated provider, and log it.
 
@@ -465,7 +465,7 @@ foreach ( get_posts( [ 'post_type' => 'tutor_enrolled', 'post_status' => 'any', 
 - Testing: test cards, 3DS cards, declines — https://docs.stripe.com/testing
 - WooCommerce Stripe Gateway 11.0.0 source read on 2026-11-13: `includes/class-wc-stripe-webhook-handler.php` (signature validation, `woocommerce_api_wc_stripe`), `includes/class-wc-stripe-logger.php`, `includes/class-wc-stripe-helper.php` (`SETTINGS_OPTION`)
 
-**FluentSMTP**
+**SMTP plugin (FluentSMTP example)**
 
 - Settings, Force From Email, log retention, simulation — https://fluentsmtp.com/docs/fluent-smtp-settings
 - Email logs — https://fluentsmtp.com/docs/fluentsmtp-email-logs-feature

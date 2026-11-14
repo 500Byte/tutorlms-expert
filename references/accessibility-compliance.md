@@ -2,7 +2,7 @@
 
 > This file is an operating reference, not legal advice. Every item marked **[ABOGADO]** needs a licensed attorney (and, where noted, a privacy professional or accountant) to review the actual facts: entity, states served, contracts, and data flows. Do not paste this document into a client deliverable as a compliance certificate.
 
-Scope: a Tutor LMS 3.x/4.x course sold to Spanish-speaking students in the United States, with video lessons, quizzes, assignments, certificates and WooCommerce checkout. The accessibility part applies to any Tutor install; the legal part assumes a US immigration **training** academy, not a law firm.
+Scope: a Tutor LMS 3.x/4.x course with video lessons, quizzes, assignments, certificates and optional WooCommerce checkout. The accessibility part applies to any Tutor install. The legal part is a reusable checklist: use the section that matches your jurisdiction and sector. A US immigration **training** academy is included as a worked example, not as an assumption about your client.
 
 ---
 
@@ -148,7 +148,7 @@ pdfinfo file.pdf | grep -E 'Pages|Tagged|Encrypted'
 ### 1.10 Images and alt text
 
 - **1.1.1 (A):** informative image → concise alt that conveys the purpose, not the pixels. Decorative → `alt=""`. Functional (icon inside a link/button) → accessible name on the control.
-- Complex diagrams (asylum process flow, visa T timeline) → short alt plus a long description or an equivalent list/table.
+- Complex diagrams (a process flow, a timeline, a form map) → short alt plus a long description or an equivalent list/table.
 - Do not put the entire lesson text in alt. Do not write "imagen de…".
 - Profile photos in testimonials: alt is the person's name if the name is not adjacent; otherwise decorative.
 
@@ -328,9 +328,21 @@ Store consent records, DPAs and audit reports outside the public web root. If yo
 
 ---
 
-## 5. Legal compliance for a US immigration training academy
+## 5. Legal compliance: a reusable checklist
 
-The academy sells **education**. The risk is that marketing, exercises or support drift into **legal services** or into **unsupported outcome claims**. Both are enforceable.
+The academy sells **education**. The risk is that marketing, exercises or support drift into **regulated advice** (legal, medical, financial, tax) or into **unsupported outcome claims**. Both are enforceable.
+
+### 5.0 General checklist (start here)
+
+- **Regulated activity.** Does the course teach a regulated profession, or does it advise on a specific person's case, health, taxes or money? If yes, the boundary between education and advice must be written, repeated at checkout, and reviewed by counsel. **[ABOGADO]**
+- **Claims.** "Official", "guaranteed", "accredited", "licensed", "certified" and outcome promises need documentary evidence before publication. Keep a claims register.
+- **Privacy.** Identify sensitive data (health, legal, financial, immigration status, ethnic origin), the legal basis, retention, processors and cross-border transfers. **[ABOGADO + privacidad]**
+- **Consumer.** Refunds, cancellation, auto-renewal, trial terms, and the language of the contract.
+- **Accessibility.** ADA Title III / EAA / local law may apply depending on where you sell and who you serve. **[ABOGADO]**
+- **Disclaimers.** Say what the course is and what it is not, in the footer, near the price, and in the certificate.
+- **Records.** Keep the evidence behind every claim, certificate, consent and review.
+
+**Worked example — US immigration training academy (5.1–5.10).** The rest of this section applies the checklist to that sector. Skip what does not apply; the structure (boundary, claims, privacy, certificates) transfers to other regulated courses.
 
 ### 5.1 Unauthorized practice of law (UPL) **[ABOGADO]**
 
@@ -394,7 +406,7 @@ Which law applies depends on where students are, not where the academy is:
 
 Two facts that change the design:
 
-1. **Immigration data is sensitive.** CCPA/CPRA lists citizenship or immigration status and racial or ethnic origin as sensitive personal information [27]. Under GDPR, a case narrative can reveal racial/ethnic origin, religion, political opinion, sexual orientation, health or criminal history — Art. 9 special categories, and criminal data is Art. 10 [29]. That requires an Art. 9 condition (often explicit consent), extra security, and likely a DPIA.
+1. **Legal-adjacent data is sensitive.** CCPA/CPRA lists citizenship or immigration status and racial or ethnic origin as sensitive personal information [27]. Under GDPR, a case narrative can reveal racial/ethnic origin, religion, political opinion, sexual orientation, health or criminal history — Art. 9 special categories, and criminal data is Art. 10 [29]. That requires an Art. 9 condition (often explicit consent), extra security, and likely a DPIA.
 2. **Therefore: do not collect real case narratives in exercises.** Use fictional personas ("Caso ficticio: María, nacional de Honduras, entrada sin inspección en 2021") and label them. If a real case story is needed for a lesson, de-identify it, get written permission, and store it with access control.
 
 Minimum data set for a course:
@@ -404,11 +416,11 @@ Minimum data set for a course:
 - Learning: enrollment, progress, quiz attempts/scores, assignment files, certificate record.
 - Support: tickets and emails, retained per policy.
 
-Do not collect "just in case": A-numbers, receipt numbers, court dates, country-of-origin details, criminal history, medical information, or copies of immigration documents. If a form field is not needed to deliver the course, remove it.
+Do not collect "just in case": case numbers, court dates, country-of-origin details, criminal history, medical information, or copies of identity/legal documents. If a form field is not needed to deliver the course, remove it.
 
 Data map (one row per data type): `data | source | purpose | lawful basis | retention | recipients/processors | storage location | transfer mechanism`. This is the artifact counsel and the DPO will ask for.
 
-Processors to document with a DPA: hosting (IONOS; DDEV is local only), WooCommerce payment gateway, SMTP/email provider, analytics, Meta pixel/CAPI, video host, backup service, LMS plugins that phone home. "We use WordPress plugins" is not a data map.
+Processors to document with a DPA: hosting (your provider; DDEV is local only), WooCommerce payment gateway, SMTP/email provider, analytics, Meta pixel/CAPI, video host, backup service, LMS plugins that phone home. "We use WordPress plugins" is not a data map.
 
 ### 5.6 Cookies, pixels and consent **[ABOGADO + privacidad]**
 
@@ -588,7 +600,7 @@ Consulted 2026-11-13. Laws and figures change; re-check before relying on them.
 13. Section 508, 29 U.S.C. § 794d — https://www.access-board.gov/ict/
 14. California Unruh Civil Rights Act, Cal. Civ. Code § 51; New York State Human Rights Law, N.Y. Exec. Law § 296 (state-law vectors; confirm with counsel)
 
-**Immigration practice and UPL**
+**Example: immigration practice and UPL**
 
 15. 8 CFR § 1292.1 (Representation of others) — https://www.ecfr.gov/current/title-8/section-1292.1
 16. 8 CFR § 1292.11 (Recognition of an organization) — https://www.ecfr.gov/current/title-8/chapter-V/subchapter-B/part-1292/subject-group-ECFR34e832807475ad1/section-1292.11

@@ -7,7 +7,7 @@
  *
  * structure.json:
  * {
- *   "1499": [
+ *   "123": [
  *     {"title": "Tema 1: Fundamentos", "lessons": ["1.1 ...", "1.2 ..."]},
  *     {"title": "Tema 2: Estrategia", "lessons": ["2.1 ..."]}
  *   ]

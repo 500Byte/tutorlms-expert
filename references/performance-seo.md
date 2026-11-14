@@ -2,7 +2,7 @@
 
 > Tutor no es "un plugin lento". Es un plugin que **carga assets en todas las páginas**, guarda su configuración en una sola opción autoload, y calcula progreso con varias consultas por curso. En un catálogo de 5 cursos eso no se nota; en un dashboard con 40 matrículas o en un listado con 12 tarjetas, sí. Esta referencia separa lo que se puede medir de lo que se supone, y da el fix por capa.
 
-**Estado de verificación (2026-11-13).** Lo marcado como *verificado* se comprobó en este turno contra el código de Tutor LMS 4.2.1 descargado de wordpress.org, o contra documentación primaria (WordPress, web.dev, Google Search Central, Yoast, WooCommerce, IONOS). Lo marcado como *sin comprobar* no se afirma: se deja como hipótesis a validar en el sitio concreto.
+**Estado de verificación (2026-11-13).** Lo marcado como *verificado* se comprobó en este turno contra el código de Tutor LMS 4.2.1 descargado de wordpress.org, o contra documentación primaria (WordPress, web.dev, Google Search Central, Yoast, WooCommerce, hosting providers). Lo marcado como *sin comprobar* no se afirma: se deja como hipótesis a validar en el sitio concreto.
 
 ---
 
@@ -38,7 +38,7 @@ Regla: mide **plantilla por plantilla**. La home, el archivo de cursos, una fich
 
 ### 1.1 Dónde se va el tiempo en Tutor (modelo de coste)
 
-**a) Assets globales.** En Tutor 4.2.1, `Assets::frontend_scripts()` está enganchado a `wp_enqueue_scripts` y, salvo en el learning area, el dashboard y las páginas de registro, enquelea el path legacy sin mirar qué página es:
+**a) Assets globales.** En Tutor 4.x, `Assets::frontend_scripts()` está enganchado a `wp_enqueue_scripts` y, salvo en el learning area, el dashboard y las páginas de registro, enquelea el path legacy sin mirar qué página es:
 
 - `assets/css/tutor-front.min.css` — **141 KB** — sin condición
 - `assets/js/tutor-front.js` — dependencias `jquery`, `wp-i18n`, `wp-date` — sin condición
@@ -129,7 +129,7 @@ Excluye explícitamente:
 
 ```
 /dashboard/            (o el slug real de tutor_dashboard_page_id)
-/escritorio/           (si el cliente usa slug traducido)
+/dashboard/           (si el cliente usa slug traducido)
 /cursos/*/lessons/*    (learning area: progreso, notas, next/prev)
 /cursos/*/quizzes/*    (intento en curso, timer)
 /carrito/ /checkout/ /mi-cuenta/
@@ -186,9 +186,9 @@ Reglas:
 - Bunny: si el cliente ya paga Bunny Stream, `source_bunnynet` evita el iframe de YouTube. Confirma en la lección real que el player carga y que el progreso se registra.
 - `poster` siempre: evita el hueco blanco y el CLS al montar el player.
 
-### 1.7 Límites de PHP en IONOS
+### 1.7 Límites de PHP en hosting compartido
 
-IONOS documenta `memory_limit` (256 MB en el ejemplo de su guía), `max_execution_time` (60 s) y `NPROC` por plan; además, **el límite del paquete manda sobre lo que pongas en `php.ini`**. Los planes WordPress usan "Performance Levels" fijados al plan. Desde contratos del 21/07/2026 el `php.ini` va en `/home/www/`; en contratos anteriores aplica por directorio. *(Verificado en el help center de IONOS.)*
+El hosting documenta `memory_limit` (256 MB en el ejemplo de su guía), `max_execution_time` (60 s) y `NPROC` por plan; además, **el límite del paquete manda sobre lo que pongas en `php.ini`**. Los planes WordPress usan "Performance Levels" fijados al plan. Desde contratos del 21/07/2026 el `php.ini` va en `/home/www/`; en contratos anteriores aplica por directorio. *(Ejemplo verificado en el help center de IONOS; confirma el tuyo.)*
 
 Consecuencias para Tutor:
 - Importar currículos grandes, exportar reportes o regenerar CSS de Elementor puede tocar `max_execution_time`. Hazlo por WP-CLI (sin límite web) o por lotes.
@@ -284,7 +284,7 @@ wp cron event list --fields=hook,next_run_relative
 wp cache set ipt_probe 1 && wp cache get ipt_probe
 
 # estructura del curso (del propio repo)
-wp eval-file scripts/check-course.php 1499
+wp eval-file scripts/check-course.php 123
 ```
 
 `wp option list --autoload=on` acepta `on|off` y `--format=total_bytes` (verificado con WP-CLI 2.12). `wp cron event run --due-now` también.
@@ -383,7 +383,7 @@ add_action( 'wp_head', function () {
 
 > Nota de modelo verificada en 4.2.1: los metas de precio son `tutor_course_price` y `tutor_course_sale_price` (**sin** guion bajo inicial), y el producto Woo se guarda en `_tutor_course_product_id`. Lee el precio con `get_raw_course_price()`/`get_course_price()`, no con un meta hardcodeado.
 
-Reglas: un solo `Course` por URL, `price` solo si el curso es de pago, `provider` real (no inventar NIU ni acreditaciones), y nada de `aggregateRating` sin reseñas verificables. Un schema que contradice la página es peor que no tener schema.
+Reglas: un solo `Course` por URL, `price` solo si el curso es de pago, `provider` real (no inventar acreditaciones ni organismos), y nada de `aggregateRating` sin reseñas verificables. Un schema que contradice la página es peor que no tener schema.
 
 ### 3.4 Títulos, meta y contenido duplicado
 
@@ -515,7 +515,7 @@ Regla de oro: el consentimiento se actualiza en la página donde el usuario acep
 | "Tutor ya cachea" pero cada visita pega a la DB | `TutorCache` es solo por request | Object cache persistente (Redis/Memcached/SQLite) + verificar drop-in |
 | `wp_options` enorme y TTFB alto | Autoload con opciones grandes; `tutor_option` crece | Medir top 20 por bytes; sacar de autoload lo no-frontend; auditar plugins |
 | Emails/tareas de Tutor salen tarde | WP-Cron solo corre con page load y hay page cache | `DISABLE_WP_CRON` + cron del sistema con `wp cron event run --due-now` |
-| Importación o exportación muere a los 60 s | `max_execution_time` del plan IONOS | Ejecutar por WP-CLI o por lotes; no subir el límite esperando que el paquete lo permita |
+| Importación o exportación muere a los 60 s | `max_execution_time` del plan de hosting | Ejecutar por WP-CLI o por lotes; no subir el límite esperando que el paquete lo permita |
 | El carrito muestra datos de otro usuario | Página dinámica cacheada públicamente | Excluir cart/checkout/cuenta/dashboard/learning area; verificar en el edge |
 | Botones de quiz o "Continuar" dejan de funcionar tras optimizar | Defer/combine/minify rompió `tutor-core.js` o jQuery | Revertir el defer global; excluir los handles de Tutor; verificar nonces |
 | LCP móvil alto en ficha de curso | Hero sin `fetchpriority`, imagen sobredimensionada, CSS de Elementor bloqueando | `fetchpriority=high` en LCP, `srcset` correcto, external CSS medido |
@@ -547,5 +547,5 @@ Consultadas el 2026-11-13.
 - **WooCommerce — cart fragments:** desde 7.8 solo se encola con el Mini Cart widget; snippet y caveats. https://developer.woocommerce.com/2023/06/16/best-practices-for-the-use-of-the-cart-fragments-api/
 - **GA4 — ecommerce:** `purchase` requiere `transaction_id`, `value`, `currency`, `items`. https://developers.google.com/analytics/devguides/collection/ga4/ecommerce
 - **Google — Consent Mode v2:** cuatro señales, orden de `default`/`update`, `wait_for_update`. https://developers.google.com/tag-platform/security/guides/consent
-- **IONOS — límites PHP:** `memory_limit`, `max_execution_time`, `NPROC`; Performance Levels; ubicación de `php.ini` según contrato. https://www.ionos.com/help/hosting/using-php-for-web-projects/which-php-settings-can-i-change/ · https://www.ionos.com/help/wordpress/wordpress-administration/customizing-wordpress-performance-level/
+- **Shared hosting (IONOS example) — PHP limits:** `memory_limit`, `max_execution_time`, `NPROC`; Performance Levels; ubicación de `php.ini` según contrato. https://www.ionos.com/help/hosting/using-php-for-web-projects/which-php-settings-can-i-change/ · https://www.ionos.com/help/wordpress/wordpress-administration/customizing-wordpress-performance-level/
 - **WP-CLI 2.12 (verificado en el entorno):** `wp option list --autoload=on --format=total_bytes`, `wp cron event run --due-now`.

@@ -21,8 +21,8 @@ $course_id = wp_insert_post([
     'post_content' => '<p>Short description...</p>',
     'post_status' => 'publish',
 ]);
-update_post_meta($course_id, '_tutor_course_price', 497);
-update_post_meta($course_id, '_tutor_course_sale_price', 0);
+update_post_meta($course_id, 'tutor_course_price', 99);
+update_post_meta($course_id, 'tutor_course_sale_price', 0);
 update_post_meta($course_id, '_tutor_course_price_type', 'paid');
 update_post_meta($course_id, '_tutor_is_public_course', 'yes');
 update_post_meta($course_id, '_course_duration', ['hours' => 2, 'minutes' => 0]);
@@ -41,7 +41,7 @@ Use `scripts/create-course-structure.php` with a JSON map:
 
 ```json
 {
-  "1499": [
+  "123": [
     {"title": "Tema 1: Fundamentos", "lessons": ["1.1 ¿Qué es...?", "1.2 Requisitos..."]},
     {"title": "Tema 2: Estrategia", "lessons": ["2.1 Entrevista..."]}
   ]
@@ -77,7 +77,7 @@ If a lesson has no source, say `pendiente de copy` in the plan. Do not fill lega
 
 Create a `tutor_quiz` under the final topic. Add questions to `{prefix}tutor_quiz_questions` and answers to `{prefix}tutor_quiz_question_answers`. Set `tutor_quiz_option` with `passing_grade` (70), `attempts_allowed` (3), and no timer unless the client wants one.
 
-Keep the quiz scoped to the course. A Visa T quiz should not contain asylum questions. Remove typos and ambiguous options.
+Keep the quiz scoped to the course. A quiz for one course should not contain questions from another course. Remove typos and ambiguous options.
 
 ## 6. Assignment
 

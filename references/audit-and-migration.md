@@ -486,7 +486,7 @@ No reintentes a ciegas sobre la base de datos parcial. Restaura, corrige la caus
 | Curso con contraseña | `post_password` | Quitar la contraseña o entregarla al comprador. |
 | Títulos de curso duplicados | §2.9 | Fusionar, renombrar o borrar el duplicado. |
 | Curso demo con 0 matrículas | §2.10 | Borrar o convertir en plantilla interna. |
-| `timezone_string` vacío | `wp option get timezone_string` | Configurar zona IANA (`America/New_York`, etc.). |
+| `timezone_string` vacío | `wp option get timezone_string` | Configurar zona IANA (`Your/Timezone`, etc.). |
 | `email_from_address` vacío/inválido | `tutor_option` | Configurar remitente real + SMTP antes de vender. |
 | Migración con conteos distintos al inventario | §3.6 | Parar, restaurar y repetir en staging. |
 

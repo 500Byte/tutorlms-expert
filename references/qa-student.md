@@ -7,7 +7,7 @@ A course is not done when an admin can see it. It is done when a real student ca
 Use `scripts/enroll-student.php` or do it manually:
 
 ```php
-$user_id = wp_create_user('qa.student', 'QaStudent-IPT-2026!#', 'qa.student@example.com');
+$user_id = wp_create_user('qa.student', 'change-me-strong-password', 'qa.student@example.com');
 $u = new WP_User($user_id);
 $u->set_role('subscriber');
 
@@ -28,7 +28,7 @@ Verify `tutor_utils()->is_enrolled($course_id, $user_id)` is true.
 
 - Go to `/wp-login.php`.
 - Submit the form.
-- **Pass:** 302 to `/escritorio/` and 200 on the dashboard.
+- **Pass:** 302 to `/dashboard/` and 200 on the dashboard.
 - **Fail:** `wp-admin/profile.php` 500, loop, or maintenance page.
 
 If the site is in Elementor maintenance mode, logged-in users should still see the front (`exclude_mode = logged_in`). Anonymous users will see 503; that is expected and should be called out.
@@ -92,7 +92,7 @@ On the lesson that promises a download:
 
 ## 10. Certificate
 
-- At 100% and with the completion mode satisfied, the certificate is listed in `/escritorio/account/certificates/`.
+- At 100% and with the completion mode satisfied, the certificate is listed in `/dashboard/account/certificates/`.
 - Opening `/certificado-de-tutor/?cert_hash=...` returns 200.
 - The certificate shows the student name and the course title.
 - The completion email contains the certificate link if `send_certificate_link_to_course_completion_email` is on.

@@ -87,7 +87,7 @@ if (true === $can) {
 }
 ```
 
-**Verify:** `tutor_utils()->is_completed_course()` is true and `/escritorio/account/certificates/` lists the course. Open the certificate URL and confirm the student name and course title.
+**Verify:** `tutor_utils()->is_completed_course()` is true and `/dashboard/account/certificates/` lists the course. Open the certificate URL and confirm the student name and course title.
 
 ## "Archivos adjuntos" tab empty
 
@@ -128,7 +128,7 @@ If `next_id` is 0 in the middle of the course, fix `post_parent`/`menu_order`. I
 ```php
 add_filter('login_redirect', function ($redirect_to, $requested, $user) {
     if ($user instanceof WP_User && !user_can($user, 'manage_options')) {
-        return home_url('/escritorio/');
+        return home_url('/dashboard/');
     }
     return $redirect_to;
 }, 10, 3);
@@ -143,24 +143,24 @@ Also make sure the page configured in `tutor_dashboard_page_id` contains `[tutor
 **Fix:**
 
 ```php
-update_option('timezone_string', 'America/New_York');
+update_option('timezone_string', 'Your/Timezone');
 update_option('gmt_offset', '');
 ```
 
 ## WhatsApp or chat widget covers the course UI
 
-**Fix (Joinchat example):**
+**Fix (generic chat widget):**
 
 ```css
-body.single-courses .joinchat,
-body.single-lesson .joinchat { display: none !important; }
+body.single-courses .site-chat,
+body.single-lesson .site-chat { display: none !important; }
 ```
 
 Scope to the post types, not the whole site, unless the client wants it gone everywhere.
 
-## WPCode snippets exist but do nothing
+## a snippet plugin snippets exist but do nothing
 
-**Cause:** the WPCode plugin is not installed; `wpcode` posts are orphan data.
+**Cause:** the snippet plugin is not installed; `wpcode` posts are orphan data.
 
 **Fix:** move the logic to a mu-plugin (`wp-content/mu-plugins/`) or a child theme, verify it loads, and delete the orphan posts after a backup. A `gettext` filter and a small `template_redirect` hook are typical.
 

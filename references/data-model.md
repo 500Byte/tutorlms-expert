@@ -4,7 +4,7 @@
 
 ## Table prefix
 
-Use `$wpdb->prefix` inside PHP. On some hosts the prefix has no underscore (e.g. `dtds`), so `$wpdb->prefix . 'tutor_quiz_questions'` is correct while a hardcoded `wp_` is not. In SQL, confirm with `SHOW TABLES LIKE '%tutor%'`.
+Use `$wpdb->prefix` inside PHP. On some hosts the prefix has no underscore (e.g. `yourprefix`), so `$wpdb->prefix . 'tutor_quiz_questions'` is correct while a hardcoded `wp_` is not. In SQL, confirm with `SHOW TABLES LIKE '%tutor%'`.
 
 ## Post types
 

@@ -48,10 +48,10 @@ El agente la cargará cuando detecte Tutor LMS, cursos, lecciones, quizzes, assi
 wp eval-file scripts/create-course-structure.php structure.json --path=/ruta/al/wordpress
 
 # Crear alumno de QA e inscribirlo
-wp eval-file scripts/enroll-student.php 1499 qa.student 'QaStudent-IPT-2026!#' qa@example.com 1624 --path=/ruta/al/wordpress
+wp eval-file scripts/enroll-student.php 123 qa.student 'change-me-strong-password' qa@example.com 456 --path=/ruta/al/wordpress
 
 # Verificar un curso antes de publicar
-wp eval-file scripts/check-course.php 1499 --path=/ruta/al/wordpress
+wp eval-file scripts/check-course.php 123 --path=/ruta/al/wordpress
 ```
 
 ## Aplicaciones
@@ -61,17 +61,17 @@ wp eval-file scripts/check-course.php 1499 --path=/ruta/al/wordpress
 | **Auditoría y lanzamiento** | Detectar cursos vacíos, lecciones sin enlace, quizzes sin preguntas, tareas sin curso, adjuntos que faltan, certificados sin plantilla, productos sin precio, duplicados y demo huérfano. | `audit-and-migration.md`, `audit-course.php` |
 | **Migración** | Traer cursos, lecciones, quizzes y alumnos desde LearnDash, LifterLMS o LearnPress; qué no se migra; rollback. | `audit-and-migration.md` |
 | **Soporte y troubleshooting** | Lecciones bloqueadas, progreso falso, “no autorizado”, nonce, certificado que no se emite, botón next, login 500, timezone, CSS global. | `troubleshooting.md` |
-| **Comercio y email** | Producto Woo, precio, inscripción, bundles, cupones, suscripciones, FluentSMTP, DMARC, secuencias de bienvenida/recordatorio/certificado. | `commerce-email.md` |
-| **Accesibilidad y cumplimiento** | WCAG 2.2 AA, subtítulos y audio descripción, UPL/EOIR, CCPA/CPRA/GDPR, FTC, disclaimers y claims. | `accessibility-compliance.md` |
+| **Comercio y email** | Producto Woo, precio, inscripción, bundles, cupones, suscripciones, SMTP (p. ej. FluentSMTP), DMARC, secuencias de bienvenida/recordatorio/certificado. | `commerce-email.md` |
+| **Accesibilidad y cumplimiento** | WCAG 2.2 AA, subtítulos y audio descripción, actividad regulada (legal/salud/finanzas como ejemplos), privacidad, FTC, disclaimers y claims. | `accessibility-compliance.md` |
 | **Rendimiento y SEO** | Assets de Tutor, object cache, queries, video, schema de curso, GA4/Meta. | `performance-seo.md` |
 | **QA de estudiante** | Simular compra/acceso, recorrer lecciones, quiz, tarea, progreso y certificado. | `qa-student.md` |
 
 ## Qué cumple y qué no
 
 - **Accesibilidad:** da criterios y evidencias para WCAG 2.2 AA; no certifica una instalación concreta. Las captions son nivel A y la audio descripción (1.2.5) es el hueco habitual en tutoriales de formularios.
-- **Privacidad:** orienta sobre CCPA/CPRA/GDPR y datos sensibles (estatus migratorio, origen étnico, narrativas de caso); no sustituye una revisión legal ni una DPIA.
+- **Privacidad:** orienta sobre CCPA/CPRA/GDPR y datos sensibles (salud, situación legal, origen étnico, narrativas de caso); no sustituye una revisión legal ni una DPIA.
 - **Publicidad y claims:** advierte sobre “oficial”, “garantizado”, “acreditado” y promesas de resultado; no valida claims sin evidencia.
-- **EOIR:** una academia for-profit no es una organización reconocida por EOIR; la skill evita prometer “representante acreditado” o “certificación oficial”.
+- **Actividad regulada:** la skill da un checklist reutilizable (legal, salud, finanzas); el caso de inmigración es un ejemplo trabajado, no una asunción. Evita prometer credenciales o representación que no existan.
 - **Pagos:** asume WooCommerce/Stripe/PayPal y no almacena datos de tarjeta; no sustituye la configuración PCI del gateway.
 - **Migración:** cubre las vías oficiales (LearnDash, LifterLMS, LearnPress); Teachable y Moodle no tienen migración oficial y se marcan como no verificables.
 
