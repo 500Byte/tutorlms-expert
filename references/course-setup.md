@@ -1,5 +1,7 @@
 # Course setup: from zero to sellable
 
+> **Read when:** you are taking a new Tutor course from empty install to a sellable, certifiable product.
+
 This is the sequence that produces a course a real student can buy, consume, complete and certify. Adapt the copy and the price to the client; never invent the legal content.
 
 ## 0. Decide before building

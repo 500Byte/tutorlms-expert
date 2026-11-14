@@ -1,5 +1,7 @@
 # Troubleshooting Tutor LMS
 
+> **Read when:** a Tutor course, lesson, quiz or checkout is misbehaving and you need the root cause, not a patch.
+
 Each entry: symptom → root cause → fix → verification. Prefer the cause, not the symptom.
 
 ## Lessons, quizzes or assignments redirect to `#tutor_prereq`

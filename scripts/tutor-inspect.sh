@@ -6,8 +6,123 @@ set -euo pipefail
 WP_PATH="${1:-.}"
 WP=(wp --path="$WP_PATH")
 
+# version_ge A B: true when A >= B (GNU version sort).
+version_ge() {
+    local lower
+    lower="$(printf '%s\n%s\n' "$2" "$1" | sort -V)"
+    [ "${lower%%$'\n'*}" = "$2" ]
+}
+
 echo "== Site =="
 "${WP[@]}" option get siteurl
+
+echo
+echo "== Versions =="
+tutor_version="$("${WP[@]}" plugin get tutor --field=version 2>/dev/null || true)"
+if [ -n "$tutor_version" ]; then
+    echo "tutor=$tutor_version"
+else
+    echo "tutor=unknown"
+fi
+tutor_pro_version="$("${WP[@]}" plugin get tutor-pro --field=version 2>/dev/null || true)"
+if [ -n "$tutor_pro_version" ]; then
+    echo "tutor-pro=$tutor_pro_version"
+else
+    echo "tutor-pro=n/a"
+fi
+
+echo
+echo "== Tutor v4 detection =="
+if [ -z "$tutor_version" ]; then
+    echo "unknown"
+elif version_ge "$tutor_version" "4.0"; then
+    echo "v4"
+else
+    echo "pre-v4"
+fi
+
+echo
+echo "== REST API token auth gate =="
+if [ -z "$tutor_version" ]; then
+    echo "token_auth=unknown"
+elif version_ge "$tutor_version" "4.2"; then
+    echo "token_auth=available (tutor>=4.2)"
+else
+    echo "token_auth=unavailable (tutor<4.2)"
+fi
+
+echo
+echo "== Ecommerce engine =="
+"${WP[@]}" eval '
+$matches = [];
+$opt = get_option("tutor_option");
+if (is_array($opt)) {
+    foreach ($opt as $key => $value) {
+        if (preg_match("/monetiz|ecommerce|engine/i", (string) $key)) {
+            $matches["tutor_option[" . $key . "]"] = $value;
+        }
+    }
+}
+$wpdb = $GLOBALS["wpdb"];
+$rows = $wpdb->get_results("
+    SELECT option_name
+    FROM {$wpdb->options}
+    WHERE option_name LIKE \"%tutor%\"
+      AND (option_name LIKE \"%monetiz%\" OR option_name LIKE \"%ecommerce%\" OR option_name LIKE \"%engine%\")
+");
+foreach ($rows as $row) {
+    if ($row->option_name === "tutor_option") { continue; }
+    $matches[$row->option_name] = get_option($row->option_name);
+}
+if (empty($matches)) {
+    echo "engine=unknown\n";
+} else {
+    ksort($matches);
+    foreach ($matches as $label => $value) {
+        echo $label . "=" . json_encode($value) . "\n";
+    }
+}
+'
+
+echo
+echo "== Active addons =="
+"${WP[@]}" eval '
+$config = get_option("tutor_addons_config");
+if (!is_array($config)) { echo "unknown\n"; exit; }
+$enabled = [];
+foreach ($config as $file => $data) {
+    $state = isset($data["is_enable"]) ? $data["is_enable"] : null;
+    if (is_scalar($state) && filter_var($state, FILTER_VALIDATE_BOOLEAN)) {
+        $enabled[] = basename(dirname($file));
+    }
+}
+$enabled = array_values(array_unique($enabled));
+sort($enabled);
+if (empty($enabled)) { echo "none\n"; exit; }
+foreach ($enabled as $slug) { echo $slug . "\n"; }
+'
+
+echo
+echo "== Certificate builder =="
+cert_plugins="$("${WP[@]}" plugin list --fields=name,status --format=csv 2>/dev/null | grep -i certificate || true)"
+if [ -n "$cert_plugins" ]; then
+    echo "$cert_plugins"
+else
+    echo "certificate_plugin=not-found"
+fi
+"${WP[@]}" eval '
+$config = get_option("tutor_addons_config");
+if (!is_array($config)) { echo "certificate_addon=unknown\n"; exit; }
+$found = false;
+foreach ($config as $file => $data) {
+    $slug = basename(dirname($file));
+    if (stripos($slug, "certificate") === false && stripos($file, "certificate") === false) { continue; }
+    $state = isset($data["is_enable"]) ? $data["is_enable"] : null;
+    echo "certificate_addon[" . $slug . "]=" . json_encode($state) . "\n";
+    $found = true;
+}
+if (!$found) { echo "certificate_addon=not-found\n"; }
+'
 
 echo
 echo "== Courses =="
@@ -30,16 +145,39 @@ foreach ($courses as $course) {
 '
 
 echo
-echo "== Lessons missing course link =="
+echo "== Lessons without a resolvable course (meta or topic parent) =="
 "${WP[@]}" eval '
-$rows = $GLOBALS["wpdb"]->get_results("
-    SELECT l.ID, l.post_title
-    FROM {$GLOBALS["wpdb"]->posts} l
-    LEFT JOIN {$GLOBALS["wpdb"]->postmeta} pm
-        ON pm.post_id = l.ID AND pm.meta_key = \"_tutor_course_id_for_lesson\"
-    WHERE l.post_type = \"lesson\" AND pm.meta_value IS NULL
+$wpdb = $GLOBALS["wpdb"];
+$rows = $wpdb->get_results("
+    SELECT ID, post_title, post_parent
+    FROM {$wpdb->posts}
+    WHERE post_type = \"lesson\"
 ");
-foreach ($rows as $row) { echo $row->ID . " | " . $row->post_title . "\n"; }
+$unresolved = [];
+foreach ($rows as $row) {
+    $course_id = 0;
+    $meta_id = (int) get_post_meta($row->ID, "_tutor_course_id_for_lesson", true);
+    if ($meta_id > 0) {
+        $meta_post = get_post($meta_id);
+        if ($meta_post && $meta_post->post_type === "courses") {
+            $course_id = (int) $meta_post->ID;
+        }
+    }
+    if (!$course_id && $row->post_parent) {
+        $topic = get_post($row->post_parent);
+        if ($topic && $topic->post_type === "topics" && $topic->post_parent) {
+            $course = get_post($topic->post_parent);
+            if ($course && $course->post_type === "courses") {
+                $course_id = (int) $course->ID;
+            }
+        }
+    }
+    if (!$course_id) {
+        $unresolved[] = $row;
+    }
+}
+echo sprintf("lessons scanned: %d | unresolved: %d\n", count($rows), count($unresolved));
+foreach ($unresolved as $row) { echo $row->ID . " | " . $row->post_title . "\n"; }
 '
 
 echo

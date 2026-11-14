@@ -1,5 +1,7 @@
 # Commerce and email: selling courses with Tutor LMS + WooCommerce
 
+> **Read when:** a paid course gives no access or transactional email never arrives after checkout.
+
 > Money lives in WooCommerce. Access lives in Tutor. Almost every "paid but no access" or "email never arrived" ticket is those two systems disagreeing about a status.
 >
 > Verified against Tutor 4.x + Tutor Pro 4.x (`course-bundle`, `wc-subscriptions`, `tutor-email` addons), WooCommerce 11.1.2, WooCommerce Stripe Gateway 11.0.0 and FluentSMTP 2.4.5, read from plugin source on 2026-11-13. Version-specific behaviour is marked inline — check the installed version before repeating it.

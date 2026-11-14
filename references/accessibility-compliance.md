@@ -1,5 +1,7 @@
 # Accessibility and legal compliance for Tutor LMS courses
 
+> **Read when:** you must check WCAG, captions, legal disclaimers or jurisdiction-specific compliance for a Tutor course.
+
 > This file is an operating reference, not legal advice. Every item marked **[ABOGADO]** needs a licensed attorney (and, where noted, a privacy professional or accountant) to review the actual facts: entity, states served, contracts, and data flows. Do not paste this document into a client deliverable as a compliance certificate.
 
 Scope: a Tutor LMS 3.x/4.x course with video lessons, quizzes, assignments, certificates and optional WooCommerce checkout. The accessibility part applies to any Tutor install. The legal part is a reusable checklist: use the section that matches your jurisdiction and sector. A US immigration **training** academy is included as a worked example, not as an assumption about your client.

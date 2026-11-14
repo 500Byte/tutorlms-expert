@@ -1,5 +1,7 @@
 # Tutor LMS data model
 
+> **Read when:** you need to locate where Tutor stores a course, enrollment or quiz value before writing SQL.
+
 > Read this before writing SQL or a one-off script. Tutor 4 is post-based; most "missing" data is a post with the wrong `post_parent` or a meta key with the wrong type.
 
 ## Table prefix

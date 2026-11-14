@@ -1,0 +1,164 @@
+name: Skill CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate skill package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Validate SKILL.md frontmatter and body length
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ ! -f SKILL.md ]; then
+            echo "::error file=SKILL.md::SKILL.md is missing"
+            exit 1
+          fi
+
+          if [ "$(head -n 1 SKILL.md)" != "---" ]; then
+            echo "::error file=SKILL.md::SKILL.md has no YAML frontmatter"
+            exit 1
+          fi
+
+          close=$(awk 'NR > 1 && $0 == "---" { print NR; exit }' SKILL.md)
+          if [ -z "$close" ]; then
+            echo "::error file=SKILL.md::YAML frontmatter is not closed with ---"
+            exit 1
+          fi
+
+          body_words=$(awk -v start="$close" 'NR > start' SKILL.md | wc -w | tr -d '[:space:]')
+          echo "SKILL.md body: ${body_words} words (limit: 1600)"
+
+          if [ "$body_words" -gt 1600 ]; then
+            echo "::error file=SKILL.md::Body exceeds 1600 words (${body_words})"
+            exit 1
+          fi
+
+          if [ "$body_words" -ge 1500 ]; then
+            echo "::warning file=SKILL.md::Body is close to the 1600-word limit (${body_words})"
+          fi
+
+      - name: Validate JSON files under evals/
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          files=$(find evals -type f -name '*.json' 2>/dev/null | sort)
+          if [ -z "$files" ]; then
+            echo "No JSON files found under evals/; nothing to validate"
+            exit 0
+          fi
+
+          while IFS= read -r file; do
+            if ! python3 -m json.tool "$file" >/dev/null; then
+              echo "::error file=${file}::Invalid JSON in ${file}"
+              exit 1
+            fi
+            echo "JSON OK: ${file}"
+          done <<< "$files"
+
+      - name: Validate references named in SKILL.md exist
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          prefixed=$(grep -oE 'references/[A-Za-z0-9._-]+\.md' SKILL.md || true)
+          bare=$(grep -oE '[a-z0-9-]+\.md' SKILL.md || true)
+
+          refs=$(
+            {
+              printf '%s\n' "$prefixed"
+              printf '%s\n' "$bare" | sed '/^$/d' | sed 's#^#references/#'
+            } | sed '/^$/d' | sort -u
+          )
+
+          if [ -z "$refs" ]; then
+            echo "No references named in SKILL.md; nothing to check"
+            exit 0
+          fi
+
+          missing=0
+          while IFS= read -r ref; do
+            if [ ! -f "$ref" ]; then
+              echo "::error file=SKILL.md::Referenced file does not exist: ${ref}"
+              missing=1
+            else
+              echo "Reference OK: ${ref}"
+            fi
+          done <<< "$refs"
+
+          if [ "$missing" -ne 0 ]; then
+            exit 1
+          fi
+
+      - name: Lint PHP files under scripts/
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if ! command -v php >/dev/null 2>&1; then
+            echo "php not found; installing php-cli"
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq php-cli
+          fi
+
+          files=$(find scripts -type f -name '*.php' 2>/dev/null | sort)
+          if [ -z "$files" ]; then
+            echo "No PHP files found under scripts/; nothing to lint"
+            exit 0
+          fi
+
+          while IFS= read -r file; do
+            php -l "$file"
+          done <<< "$files"
+
+      - name: Syntax-check shell scripts under scripts/
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          files=$(find scripts -type f -name '*.sh' 2>/dev/null | sort)
+          if [ -z "$files" ]; then
+            echo "No shell scripts found under scripts/; nothing to check"
+            exit 0
+          fi
+
+          while IFS= read -r file; do
+            bash -n "$file"
+            echo "Shell syntax OK: ${file}"
+          done <<< "$files"
+
+      - name: Require a Read when line in every reference
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          files=$(find references -type f -name '*.md' 2>/dev/null | sort)
+          if [ -z "$files" ]; then
+            echo "No reference files found under references/; nothing to check"
+            exit 0
+          fi
+
+          missing=0
+          while IFS= read -r file; do
+            if ! grep -qF 'Read when:' "$file"; then
+              echo "::error file=${file}::Missing 'Read when:' line in ${file}"
+              missing=1
+            else
+              echo "Read when OK: ${file}"
+            fi
+          done <<< "$files"
+
+          if [ "$missing" -ne 0 ]; then
+            exit 1
+          fi

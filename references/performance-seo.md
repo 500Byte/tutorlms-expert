@@ -1,5 +1,7 @@
 # Rendimiento y SEO de Tutor LMS en producción
 
+> **Read when:** necesitas diagnosticar carga lenta, assets globales o SEO de cursos en producción.
+
 > Tutor no es "un plugin lento". Es un plugin que **carga assets en todas las páginas**, guarda su configuración en una sola opción autoload, y calcula progreso con varias consultas por curso. En un catálogo de 5 cursos eso no se nota; en un dashboard con 40 matrículas o en un listado con 12 tarjetas, sí. Esta referencia separa lo que se puede medir de lo que se supone, y da el fix por capa.
 
 **Estado de verificación (2026-11-13).** Lo marcado como *verificado* se comprobó en este turno contra el código de Tutor LMS 4.2.1 descargado de wordpress.org, o contra documentación primaria (WordPress, web.dev, Google Search Central, Yoast, WooCommerce, hosting providers). Lo marcado como *sin comprobar* no se afirma: se deja como hipótesis a validar en el sitio concreto.

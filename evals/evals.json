@@ -18,6 +18,12 @@
       "prompt": "Un alumno completó el 100% del curso en Tutor LMS pero no le aparece el certificado. La tarea práctica está entregada y sigue en Pending. ¿Cuál es la causa y qué opciones tengo para que el alumno reciba su certificado?",
       "expected_output": "Explica course_completion_process strict vs flexible, la relación con la tarea Pending y el comentario course_completed, y da las dos opciones: calificar la tarea o cambiar a flexible. Debe indicar cómo verificar is_completed_course y la página de certificados.",
       "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Un cliente quiere una academia de pago con: cursos individuales, un bundle de 3 cursos, suscripción mensual a todos los cursos, regalar un curso, un tier solo para miembros, clases en vivo con calendario, borradores de curso y quizzes con IA, certificados de marca sin código, notas de quizzes y tareas, reutilizar la misma lección en varios cursos, varios instructores y contenido H5P. Para cada punto dime si es core de Tutor LMS, addon de Pro o plugin externo, cómo se llama en el admin y de qué depende. Si algo no es nativo, dilo.",
+      "expected_output": "Acierta el tier de cada punto: eCommerce nativo, Subscriptions y Memberships como addons Pro que exigen el motor Native (full-site/categoría, trial, membership-only), Gift Course como toggle core en Settings > Course, Live Classes con addon Zoom o Google Meet, AI Studio en el Course Builder con conector de IA, Certificate Builder como plugin separado + addon, Gradebook y Multi Instructors como addons Pro, Content Bank como addon Pro para reutilizar lecciones/tareas/preguntas, H5P como addon Pro. No debe afirmar que gift, AI, memberships, subscriptions, contenido reutilizable o calendario 'no son nativos'. Debe advertir que solo se usa un motor de eCommerce por sitio y que un toggle no equivale a feature funcionando (credenciales, plan, plantilla).",
+      "files": []
     }
   ]
 }

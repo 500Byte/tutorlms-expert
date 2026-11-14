@@ -1,5 +1,7 @@
 # Tutor Pro addons
 
+> **Read when:** you need to inspect, enable or debug a Tutor Pro addon such as content bank or subscriptions.
+
 Tutor Pro ships addons as directories under `wp-content/plugins/tutor-pro/addons/`. The enabled state lives in the `tutor_addons_config` option, keyed by the addon bootstrap file, with `is_enable` = 1/0.
 
 ## Inspect
@@ -18,7 +20,7 @@ ls wp-content/plugins/tutor-pro/addons
 |---|---|---|
 | `tutor-assignments` | Practical tasks with file upload, deadline, marks, grading | The strongest differentiator for "learn by doing" courses. Needs `_tutor_course_id_for_assignments` and enrollment. |
 | `gradebook` | Gradebook and scale | Global scale (`gradebook_scale`); no native 40/60 weighting per course. |
-| `tutor-certificate` | Certificate builder and issuance | Assign `tutor_course_certificate_template` per course. Verify with a real completed student. |
+| `tutor-certificate` | Certificate issuance and legacy template builder | Assign `tutor_course_certificate_template` per course. The newer **Tutor LMS Certificate Builder** is a separate plugin; verify which builder the install uses. Verify with a real completed student. |
 | `tutor-course-attachments` | Per-lesson attachments tab | Requires `_tutor_attachments` on the lesson. |
 | `tutor-course-preview` | Free preview lessons | Mark a lesson `_is_preview = yes`; ideal for lead capture. |
 | `tutor-prerequisites` | Course prerequisites | `_tutor_course_prerequisites_ids`; `tutor_pro_show_prerequisites_courses` shows them; `tutor_pro_prerequisites_redirect` hard-blocks. Prefer recommendation over gate. |

@@ -1,0 +1,25 @@
+{
+  "positive": [
+    "¿Cómo vendo una suscripción mensual a todos los cursos en Tutor LMS?",
+    "Quiero un sitio solo para miembros con Tutor LMS Membership-Only Mode",
+    "El cliente quiere regalar un curso con Gift Course y que el destinatario lo reclame",
+    "AI Studio no genera el outline del curso en el Course Builder",
+    "El certificado de Tutor LMS no aparece al completar el curso",
+    "Una lección redirige a #tutor_prereq y el alumno sí está inscrito",
+    "La REST API de Tutor LMS devuelve 403 en /courses/123",
+    "Migrar cursos de LearnDash a Tutor LMS sin perder quizzes",
+    "Content Bank: reutilizar la misma lección en varios cursos",
+    "Notas de quizzes y tareas en el gradebook de Tutor LMS"
+  ],
+  "near_miss": [
+    "Configurar productos y suscripciones en WooCommerce",
+    "Ajustes de quiz en LearnDash",
+    "Backup y restauración de un curso en Moodle",
+    "Nonce de la REST API de WordPress core",
+    "Diseñar la página de curso con Elementor"
+  ],
+  "holdout": [
+    "Clases en vivo con Google Meet y calendario en Tutor LMS",
+    "Varios instructores en un mismo curso de Tutor LMS"
+  ]
+}

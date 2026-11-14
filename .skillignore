@@ -1,0 +1,7 @@
+# evals/ are development-only fixtures; they are excluded from skill packaging.
+.git/
+.github/
+evals/
+node_modules/
+*.log
+.DS_Store

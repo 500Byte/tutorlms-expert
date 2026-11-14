@@ -1,5 +1,7 @@
 # Auditoría y migración de cursos Tutor LMS
 
+> **Read when:** necesitas auditar un curso antes de publicarlo o migrar contenido desde otro LMS.
+
 > Úsalo antes de publicar o vender un curso, y antes de mover contenido desde otro LMS. La auditoría es de solo lectura; la migración no lo es.
 >
 > **Verificado el 2026-11-13** contra el código de `themeum/tutor` (rama `master`) y la documentación oficial enlazada al final. Lo que no se pudo verificar aparece marcado como **verificar en la instalación**.

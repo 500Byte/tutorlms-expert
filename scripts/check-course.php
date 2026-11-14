@@ -53,12 +53,29 @@ foreach ($topics as $topic) {
     ]));
 }
 
-$missing_course_link = [];
+$unresolved_course = [];
+$missing_meta = [];
 $with_attachments = 0;
 $with_video = 0;
 foreach ($lessons as $lesson) {
-    if (!get_post_meta($lesson->ID, '_tutor_course_id_for_lesson', true)) {
-        $missing_course_link[] = $lesson->ID;
+    $resolved = 0;
+    $meta = (int) get_post_meta($lesson->ID, '_tutor_course_id_for_lesson', true);
+    if (!$meta) {
+        $missing_meta[] = $lesson->ID;
+    } elseif (($meta_post = get_post($meta)) && 'courses' === $meta_post->post_type) {
+        $resolved = (int) $meta_post->ID;
+    }
+    if (!$resolved) {
+        $topic = $lesson->post_parent ? get_post($lesson->post_parent) : null;
+        if ($topic && 'topics' === $topic->post_type && $topic->post_parent) {
+            $course_post = get_post($topic->post_parent);
+            if ($course_post && 'courses' === $course_post->post_type) {
+                $resolved = (int) $course_post->ID;
+            }
+        }
+    }
+    if (!$resolved) {
+        $unresolved_course[] = $lesson->ID;
     }
     if (get_post_meta($lesson->ID, '_tutor_attachments', true)) {
         $with_attachments++;
@@ -87,7 +104,8 @@ WP_CLI::log('Quizzes: ' . count($quizzes));
 WP_CLI::log('Assignments: ' . count($assignments));
 WP_CLI::log('Lessons with attachments: ' . $with_attachments);
 WP_CLI::log('Lessons with video: ' . $with_video);
-WP_CLI::log('Lessons missing course link: ' . (count($missing_course_link) ? implode(', ', $missing_course_link) : 'none'));
+WP_CLI::log('Lessons without a resolvable course: ' . (count($unresolved_course) ? implode(', ', $unresolved_course) : 'none'));
+WP_CLI::log('Lessons missing _tutor_course_id_for_lesson (meta only; topic parent resolves): ' . (count($missing_meta) ? implode(', ', $missing_meta) : 'none'));
 WP_CLI::log('Enrollments: ' . count($enrollments));
 
 $prerequisites = get_post_meta($course_id, '_tutor_course_prerequisites_ids', true);
@@ -98,8 +116,8 @@ WP_CLI::log('Product ID: ' . (get_post_meta($course_id, '_tutor_course_product_i
 WP_CLI::log('Completion mode: ' . ($options['course_completion_process'] ?? '?'));
 
 $warnings = [];
-if (count($missing_course_link)) {
-    $warnings[] = 'Some lessons will not count toward progress (missing _tutor_course_id_for_lesson).';
+if (count($unresolved_course)) {
+    $warnings[] = 'Some lessons have no resolvable course (no valid _tutor_course_id_for_lesson and no topic parent under a course).';
 }
 if (!$quizzes && !$assignments) {
     $warnings[] = 'No quiz or assignment: the course has no graded check.';

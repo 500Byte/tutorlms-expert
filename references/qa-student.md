@@ -1,5 +1,7 @@
 # Student QA
 
+> **Read when:** you must verify a course end to end as a real student before launching or handing it over.
+
 A course is not done when an admin can see it. It is done when a real student can buy or access it, consume the content, complete it and receive the certificate. This checklist simulates that path.
 
 ## 1. Create the QA student
